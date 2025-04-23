@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure---ps3=_sj7mr+&watf)+oy5w)nuqkrs&onpn$e(qa_rly6)npc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['51.20.116.163', 'localhost']
 
 # Esto me lo recomendo Gemini por el cambio de la definicion de la tabla de user
 AUTH_USER_MODEL = 'plazoleta.User'
