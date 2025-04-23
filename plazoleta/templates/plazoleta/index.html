@@ -1,0 +1,46 @@
+{% extends "plazoleta/layout.html" %}
+
+{% block body %}
+<input type="hidden" id="myVar1" name="username" value="{{ user.username }}" readonly>
+<input type="hidden" id="myVar2" name="userid" value="{{ user.id }}" readonly>
+
+<figure class="text-center">
+    <blockquote class="blockquote">
+      <p><h1>FARMACIAS PLAZOLETA</h1></p>
+    </blockquote>
+</figure>
+
+{% comment %}
+{% if user.is_authenticated %}
+    {% comment %}<li class="nav-item">
+        <input type="hidden" id="myUser" name="user" value="{{ user.id }}" readonly>
+        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+    </li>
+{% endif %}{% endcomment %}
+
+{% if user.is_authenticated %}
+    <div style="text-align: center;">
+        <h3>
+            <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'index' %}';">Caja Diaria</button>
+        </h3>
+    </div>
+    <div style="text-align: center;">
+        <h3>
+            <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'index' %}';">Control de Asistencia</button>
+        </h3>
+    </div>
+{% endif %}
+
+{% comment %}
+<button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-success">Success</button>
+<button type="button" class="btn btn-danger">Danger</button>
+<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>
+<button type="button" class="btn btn-link">Link</button>
+{% endcomment %}
+
+{% endblock %}

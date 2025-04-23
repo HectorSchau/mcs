@@ -1,0 +1,94 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Farmacias Plazoleta{% endblock %}</title>
+        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <!--<link href="{% static 'plazoleta/styles.css' %}" rel="stylesheet">-->
+        
+    </head>
+    <body>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+        
+        
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <a class="navbar-brand" href="#"> Farmacias Plazoleta</a>
+          
+            <div>
+              <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <input type="hidden" id="myUser" name="user" value="{{ user.id }}" readonly>
+                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'home' %}">MCS Home</a>
+                </li>
+                {% if user.is_authenticated %}
+                    {% comment %}<li class="nav-item">
+                        <a class="nav-link" href="{% url 'new' %}">New Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'fmenu' %}">Following</a>
+                    </li>{% endcomment %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+              </ul>
+            </div>
+          </nav>
+        
+        <div class="body">
+            {% block body %}
+            {% endblock %}
+        </div>
+        <!-- Load React. -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+
+        {% comment %} <script type="module">
+            import { findDOMNode } from 'react-dom';
+            {/* import { something } from './somewhere.js';
+            // ... */}
+        </script> {% endcomment %}
+
+        <!-- Load our main javascrip component. -->
+        <script src="{% static 'network/main.js' %}"></script>
+        
+        {% comment %} VA A PASAR POR EL SCRIPT: mock_newfase-1.js<br>
+        REQUESTED PATH: {{ request.path }}<br> {% endcomment %}
+        {% if '/' in request.path and not 'profile' in request.path and not 'fmenu' in request.path %}
+            <script src="{% static 'network/Reac-Component-final-1.js' %}" type="text/babel"></script>
+            {% comment %} PASO POR EL SCRIPT mock_newfase-1.js<br><br> {% endcomment %}
+        {% else %}    
+            {% comment %} NO PASO POR EL SCRIPT mock_newfase-1.js<br><br> {% endcomment %}
+        {% endif %}
+
+        {% comment %} VA A PASAR POR EL SCRIPT: mock_newfase-2.js<br>
+        REQUESTED PATH: {{ request.path }}<br> {% endcomment %}
+        {% if '/new' in request.path and not 'profile' in request.path %}
+            <script src="{% static 'network/mock_newfase-2.js' %}" type="text/babel"></script>
+            {% comment %} PASO POR EL SCRIPT mock_newfase-2.js<br><br> {% endcomment %}
+        {% comment %} {% else %}    
+            NO PASO POR EL SCRIPT mock_newfase-2.js<br><br> {% endcomment %}
+        {% endif %}
+        
+    </body>
+</html>

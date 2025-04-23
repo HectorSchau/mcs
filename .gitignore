@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+db.sqlite3
+env/
+venv/
+*.log
+*.swp
+*.swo
+.DS_Store
+static/ # Si no planeas subir los archivos estáticos generados localmente
+*.egg-info/
