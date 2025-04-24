@@ -21,26 +21,30 @@
 {% if user.is_authenticated %}
     <div style="text-align: center;">
         <h3>
-            <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'index' %}';">Caja Diaria</button>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'menucaja' %}';">Caja Diaria</button>
         </h3>
     </div>
     <div style="text-align: center;">
         <h3>
-            <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'index' %}';">Control de Asistencia</button>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'index' %}';">Control de Asistencia</button>
         </h3>
     </div>
+    
+    
 {% endif %}
 
-<!--{% comment %} -->
-<button type="button" class="btn btn-primary">Caja Diaria</button>
-<button type="button" class="btn btn-secondary">Caja Diaria</button>
-<button type="button" class="btn btn-success">Caja Diaria</button>
-<button type="button" class="btn btn-danger">Caja Diaria</button>
-<button type="button" class="btn btn-warning">Caja Diaria</button>
-<button type="button" class="btn btn-info">Caja Diaria</button>
-<button type="button" class="btn btn-light">Caja Diaria</button>
-<button type="button" class="btn btn-dark">Caja Diaria</button>
-<button type="button" class="btn btn-link">Caja Diaria</button>
-<!--{% endcomment %} -->
+{% comment %} 
+    <button type="button" class="btn btn-primary btn-lg">Caja Diaria</button>
+    <button type="button" class="btn btn-secondary">Caja Diaria</button>
+    <button type="button" class="btn btn-success">Caja Diaria</button>
+    <button type="button" class="btn btn-danger">Caja Diaria</button>
+    <button type="button" class="btn btn-warning">Caja Diaria</button>
+    <button type="button" class="btn btn-info">Caja Diaria</button>
+    <button type="button" class="btn btn-light">Caja Diaria</button>
+    <button type="button" class="btn btn-dark">Caja Diaria</button>
+    <button type="button" class="btn btn-link">Caja Diaria</button>
+    <button type="button" class="btn btn-outline-success btn-lg">Caja Diaria</button>
+
+{% endcomment %} 
 
 {% endblock %}

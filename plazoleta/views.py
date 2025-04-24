@@ -19,6 +19,12 @@ import json
 def index(request):
     return render(request,"plazoleta/index.html")
 
+def menucaja(request):
+    return render(request,"plazoleta/menucaja.html")    
+
+def reportecaja(request):
+    return render(request,"plazoleta/reportecaja.html")       
+
 def login_view(request):
     if request.method == "POST":
 

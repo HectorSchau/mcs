@@ -1,0 +1,37 @@
+{% extends "plazoleta/layout.html" %}
+
+{% block body %}
+<input type="hidden" id="myVar1" name="username" value="{{ user.username }}" readonly>
+<input type="hidden" id="myVar2" name="userid" value="{{ user.id }}" readonly>
+
+<figure class="text-center">
+    <blockquote class="blockquote">
+      <p><h1>Caja Diaria</h1></p>
+    </blockquote>
+</figure>
+
+{% comment %}
+{% if user.is_authenticated %}
+    {% comment %}<li class="nav-item">
+        <input type="hidden" id="myUser" name="user" value="{{ user.id }}" readonly>
+        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+    </li>
+{% endif %}{% endcomment %}
+
+{% if user.is_authenticated %}
+    
+    <div style="text-align: center;">
+        <h3>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'menucaja' %}';">Ingreso de Datos de Caja por Sucursal</button>
+        </h3>
+    </div>
+    <div style="text-align: center;">
+        <h3>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'reportecaja' %}';">Reportes de Caja por Sucursal</button>
+        </h3>
+    </div>
+    
+    
+{% endif %}
+
+{% endblock %}

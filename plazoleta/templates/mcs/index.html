@@ -3,18 +3,27 @@
     <head>
         <title>MCS</title>
     </head>
-    <body>          
-          <h1 style="text-align: center;">
-            MCS
-          </h1>
-          <div style="text-align: center;">
-            Bienvenido a la pagina central de MCS. A continuacion la lista de aplicaciones disponibles a este nivel.
-          </div>
+    <body>       
+          <div>
+            <h1 style="text-align: center;">
+              MCS
+            </h1>
+            <div style="text-align: center;" class="lead">
+              Bienvenido a la pagina central de MCS. A continuacion la lista de aplicaciones disponibles a este nivel.
+            </div>
+          <div>  
           <p><p>
+
           <div style="text-align: center;">
             <h3>
-                <a href="{% url 'index' %}">Farmacias Plazoleta</a>
+                <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'index' %}';">Farmacias Plazoleta</button>
             </h3>
           </div>
+          <div style="text-align: center;">
+            <h3>
+                <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='#';">Ingenio Ledesma</button>
+            </h3>
+          </div>
+
     </body>
 </html>                
