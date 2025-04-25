@@ -23,7 +23,10 @@ def menucaja(request):
     return render(request,"plazoleta/menucaja.html")    
 
 def reportecaja(request):
-    return render(request,"plazoleta/reportecaja.html")       
+    return render(request,"plazoleta/reportecaja.html")     
+
+def ingresocaja(request):
+    return render(request,"plazoleta/ingresocaja.html")         
 
 def login_view(request):
     if request.method == "POST":

@@ -1,4 +1,5 @@
 {% extends "plazoleta/layout.html" %}
+{% load static %}
 
 {% block body %}
 <input type="hidden" id="myVar1" name="username" value="{{ user.username }}" readonly>
@@ -6,7 +7,7 @@
 
 <figure class="text-center">
     <blockquote class="blockquote">
-      <p><h1>Caja Diaria</h1></p>
+      <p><h1>Ingreso de Datos de Caja por Sucursal</h1></p>
     </blockquote>
 </figure>
 
@@ -19,18 +20,21 @@
 {% endif %}{% endcomment %}
 
 {% if user.is_authenticated %}
+    <img src="{% static 'plazoleta/ingreso.png' %}" alt="Logo del Blog">
     
+    {% comment %}
+    <img src="planilla.png" class="img-fluid" alt="...">
     <div style="text-align: center;">
         <h3>
-            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'ingresocaja' %}';">Ingreso de Datos de Caja por Sucursal</button>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'menucaja' %}';">Ingreso de Datos de Caja por Sucursal</button>
         </h3>
     </div>
     <div style="text-align: center;">
         <h3>
-            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'reportecaja' %}';">Reportes de Caja por Sucursal</button>
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="window.location.href='{% url 'menucaja' %}';">Reportes de Caja por Sucursal</button>
         </h3>
     </div>
-    
+    {% endcomment %}
     
 {% endif %}
 
