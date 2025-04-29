@@ -35,22 +35,6 @@ def reportecaja(request):
 def ingresocaja(request):
     return render(request,"plazoleta/ingresocaja.html")        
 
-#Procedimiento original usando messages
-#def crear_caja(request):
-#    if request.method == 'POST':
-#        form = CajaForm(request.POST)
-#        if form.is_valid():
-#            form.save()
-#            messages.success(request, 'La caja se ha creado exitosamente.')
-#            return redirect('nombre_de_la_vista_de_exito') # Reemplaza con la URL a donde quieres redirigir
-#        else:
-#            messages.error(request, 'Por favor, corrige los errores en el formulario.')
-#    else:
-        #request.method == 'GET':
-#        form = CajaForm()
-    #return render(request, 'plazoleta/crear_caja.html', {'form': form})     
-#    return render(request, 'plazoleta/prueba_messages.html', {'form': form}) # <-- Cambia aquí
-
 def crear_caja(request):
     mensaje = None
     tipo_mensaje = None
@@ -135,3 +119,19 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "plazoleta/register.html")    
+
+#Procedimiento original usando messages
+#def crear_caja(request):
+#    if request.method == 'POST':
+#        form = CajaForm(request.POST)
+#        if form.is_valid():
+#            form.save()
+#            messages.success(request, 'La caja se ha creado exitosamente.')
+#            return redirect('nombre_de_la_vista_de_exito') # Reemplaza con la URL a donde quieres redirigir
+#        else:
+#            messages.error(request, 'Por favor, corrige los errores en el formulario.')
+#    else:
+        #request.method == 'GET':
+#        form = CajaForm()
+    #return render(request, 'plazoleta/crear_caja.html', {'form': form})     
+#    return render(request, 'plazoleta/prueba_messages.html', {'form': form}) # <-- Cambia aquí
