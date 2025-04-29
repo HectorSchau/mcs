@@ -1,0 +1,10 @@
+{% load messages %}
+
+<h1>Prueba de Mensajes</h1>
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

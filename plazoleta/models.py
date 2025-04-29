@@ -38,20 +38,6 @@ class Sucursal(models.Model):
     def __str__(self):
         return f"{self.NombreSuc} ({self.Direccion})"
 
-class OSociales(models.Model):
-    IdOS = models.AutoField(primary_key=True)
-    NombreOS = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.NombreOS
-
-class Tarjetas(models.Model):
-    IdTarjeta = models.AutoField(primary_key=True)
-    NombreTarjeta = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.NombreTarjeta
-
 class Caja(models.Model):
     IdCaja = models.AutoField(primary_key=True)
     IdSucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE)
@@ -73,5 +59,17 @@ class Caja(models.Model):
     def __str__(self):
         return f"Caja {self.IdCaja} - Sucursal {self.IdSucursal.NombreSuc} - {self.FechaHora}"
 
+class OSociales(models.Model):
+    IdOS = models.AutoField(primary_key=True)
+    NombreOS = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.NombreOS
+
+class Tarjetas(models.Model):
+    IdTarjeta = models.AutoField(primary_key=True)
+    NombreTarjeta = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.NombreTarjeta
 

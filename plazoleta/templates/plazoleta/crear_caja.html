@@ -1,0 +1,120 @@
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Caja</title>
+    <style>
+        .success { color: green; margin-bottom: 10px; }
+        .error { color: red; margin-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .errorlist { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Crear Nueva Caja</h1>
+
+    {% if mensaje %}
+        <div class="{{ tipo_mensaje }}">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Grabar Caja</button>
+    </form>
+
+    <a href="{% url 'menucaja' %}">Volver al menucaja</a>
+
+</body>
+</html>
+
+{% comment %} 
+HTML @da version que tampoco funciono
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Caja</title>
+    <style>
+        .success {
+            color: green;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crear Nueva Caja</h1>
+
+    {% if mensaje %}
+        <div class="{{ tipo_mensaje }}">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy:"basic" }}        
+        <button type="submit">Grabar Caja</button>
+    </form>
+
+    <a href="{% url 'menucaja' %}">Volver al menucaja</a>
+
+</body>
+</html>
+
+
+{{ form|crispy:"bootstrap5" }}
+HTML Original parausar con la libreria messages que nunca funciono
+{% load messages %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Caja</title>
+</head>
+<body>
+    <h1>Crear Nueva Caja</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">Grabar Caja</button>
+    </form>
+
+    <a href="{% url 'menucaja' %}">Volver al menucaja</a>
+
+</body>
+</html>
+{% endcomment %}
