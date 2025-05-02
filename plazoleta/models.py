@@ -1,10 +1,16 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 #from .models import Sucursal  # Importa el modelo Sucursal para la relación
 from django.db import models
+from django.conf import settings
+#from django.contrib.auth.models import User  # Importa el modelo User de Django
 
 # Create your models here.
-class User(AbstractUser):
-    id = models.AutoField(primary_key=True)
+class Usuario(AbstractUser):  # Nombre de la clase ahora es 'Usuario'
+    #id_User = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+    apellido = models.CharField(max_length=100, blank=True, null=True)
+    grupodeacceso = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Grupo de Acceso', related_name="usuario_grupodeacceso")
+
     groups = models.ManyToManyField(
         Group,
         verbose_name=('groups'),
@@ -13,8 +19,8 @@ class User(AbstractUser):
             'The groups this user belongs to. A user will get all permissions '
             'granted to each of their groups.'
         ),
-        related_name="plazoleta_users_groups",  # Cambia el related_name
-        related_query_name="plazoleta_user",
+        related_name="usuario_groups",
+        related_query_name="usuario",  # Corregido: 'usuario' (minúscula)
     )
 
     user_permissions = models.ManyToManyField(
@@ -22,13 +28,13 @@ class User(AbstractUser):
         verbose_name=('user permissions'),
         blank=True,
         help_text=('Specific permissions for this user.'),
-        related_name="plazoleta_users_permissions",  # Cambia el related_name
-        related_query_name="plazoleta_user",
+        related_name="usuario_permissions",
+        related_query_name="usuario",  # Corregido: 'usuario' (minúscula)
     )
 
-    def __str__(self):        
-        return f"{self.id}: {self.username}"      
-    pass
+    def __str__(self):
+        return f"{self.id}: {self.username}"
+
 
 class Sucursal(models.Model):
     IdSucursal = models.AutoField(primary_key=True)
@@ -55,6 +61,15 @@ class Caja(models.Model):
     Tarjetas = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     Particulares = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     OSociales = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Cajero',
+        related_name='registros_caja'  # Añade un related_name descriptivo
+    )
+    #usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Cajero')
 
     def __str__(self):
         return f"Caja {self.IdCaja} - Sucursal {self.IdSucursal.NombreSuc} - {self.FechaHora}"

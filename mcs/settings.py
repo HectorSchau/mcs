@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['13.51.16.33', 'localhost', '127.0.0.1']
 
 # Esto me lo recomendo Gemini por el cambio de la definicion de la tabla de user
-AUTH_USER_MODEL = 'plazoleta.User'
+AUTH_USER_MODEL = 'plazoleta.Usuario'
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 ]
 
 # Configuración de django-crispy-forms

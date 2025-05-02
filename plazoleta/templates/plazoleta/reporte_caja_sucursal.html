@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+{% load humanize %}
+<html>
+<head>
+    <title>Reporte de Caja por Sucursal</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left; /* Alineación por defecto a la izquierda */
+        }
+
+        th {
+            background-color: #e3873b; /* Fondo naranja para el encabezado */
+            color: white; /* Letras blancas sobre el fondo naranja */
+            font-weight: bold;
+            text-align: center; /* Centrar el texto del encabezado */
+        }
+
+        /* Centrar las columnas numéricas que no son importes */
+        td:nth-child(4), /* Operaciones */
+        td:nth-child(5), /* Efectivo (conteo) */
+        td:nth-child(7), /* Tarjetas (conteo) */
+        td:nth-child(9), /* Particulares (conteo) */
+        td:nth-child(11), /* Obras Sociales (conteo) */
+        td:nth-child(14)   /* Cajero */ {
+            text-align: center;
+        }
+
+        /* Alinear a la derecha las columnas de importes y agregar el signo $ */
+        td:nth-child(2), /* Saldo Inicial */
+        td:nth-child(3), /* Ventas */
+        td:nth-child(6), /* Importe Efectivo */
+        td:nth-child(8), /* Importe Tarjetas */
+        td:nth-child(10), /* Importe Particulares */
+        td:nth-child(12), /* Importe Obras Sociales */
+        td:nth-child(13)  /* Cierre de Caja */ {
+            text-align: right;
+        }
+
+        td:nth-child(2)::before, /* Saldo Inicial */
+        td:nth-child(3)::before, /* Ventas */
+        td:nth-child(6)::before, /* Importe Efectivo */
+        td:nth-child(8)::before, /* Importe Tarjetas */
+        td:nth-child(10)::before, /* Importe Particulares */
+        td:nth-child(12)::before, /* Importe Obras Sociales */
+        td:nth-child(13)::before { /* Cierre de Caja */
+            content: "$";
+        }
+
+        /* Estilo para la fila de totales */
+        .totales {
+            font-weight: bold;
+            background-color: #f9b377; /* Fondo naranja claro para la fila de totales */
+        }
+
+        .totales td {
+            text-align: right; /* Alinear los totales a la derecha */
+        }
+
+        .totales td:nth-child(4), /* Total Operaciones */
+        .totales td:nth-child(5), /* Total Efectivo */
+        .totales td:nth-child(7), /* Total Tarjetas */
+        .totales td:nth-child(9), /* Total Particulares */
+        .totales td:nth-child(11), /* Total Obras Sociales */
+        .totales td:nth-child(14)   /* Total Cajero */ {
+            text-align: center; /* Centrar los totales de conteo */
+        }
+
+        .totales td:first-child {
+            text-align: left; /* Alinear "Totales" a la izquierda */
+            font-weight: bold; /* Asegurar que "Totales" también esté en negrita */
+        }
+
+        .totales td:nth-child(2)::before, /* Total Saldo Inicial */
+        .totales td:nth-child(3)::before, /* Total Ventas */
+        .totales td:nth-child(6)::before, /* Total Importe Efectivo */
+        .totales td:nth-child(8)::before, /* Total Importe Tarjetas */
+        .totales td:nth-child(10)::before, /* Total Importe Particulares */
+        .totales td:nth-child(12)::before, /* Total Importe Obras Sociales */
+        .totales td:nth-child(13)::before { /* Total Cierre de Caja */
+            content: "$";
+        }
+    </style>
+</head>
+<body>
+    {% load humanize %}
+    <h1>Reporte de Caja por Sucursal</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generar Reporte</button>
+    </form>
+
+    {% if reporte_data %}
+        <h2>Fecha: {{ fecha_reporte }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sucursal</th>
+                    <th>Saldo Inicial</th>
+                    <th>Ventas</th>
+                    <th>Operaciones</th>
+                    <th>Efectivo</th>
+                    <th>Importe Efectivo</th>
+                    <th>Tarjetas</th>
+                    <th>Importe Tarjetas</th>
+                    <th>Particulares</th>
+                    <th>Importe Particulares</th>
+                    <th>Obras Sociales</th>
+                    <th>Importe Obras Sociales</th>
+                    <th>Cierre de Caja</th>
+                    <th>Cajero</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reporte_data %}
+                    <tr>
+                        <td>{{ item.sucursal }}</td>
+                        <td style="text-align: right;">{{ item.saldo_inicial|floatformat:2|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.ventas|floatformat:2|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.operaciones|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.efectivo|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.importe_efectivo|floatformat:2|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.tarjetas|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.importe_tarjetas|floatformat:2|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.particulares|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.importe_particulares|floatformat:2|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.obras_sociales|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.importe_osociales|floatformat:2|intcomma }}</td>
+                        <td style="text-align: right;">{{ item.cierre_de_caja|floatformat:2|intcomma }}</td>
+                        <td style="text-align: center;">{{ item.cajero }}</td>
+                    </tr>
+                {% endfor %}
+                <tr class="totales">
+                    <td>Totales</td>
+                    <td style="text-align: right;">{{ totales.saldo_inicial|floatformat:2|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.ventas|floatformat:2|intcomma }}</td>
+                    <td>{{ totales.operaciones|intcomma }}</td>
+                    <td>{{ totales.efectivo|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.importe_efectivo|floatformat:2|intcomma }}</td>
+                    <td>{{ totales.tarjetas|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.importe_tarjetas|floatformat:2|intcomma }}</td>
+                    <td>{{ totales.particulares|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.importe_particulares|floatformat:2|intcomma }}</td>
+                    <td>{{ totales.obras_sociales|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.importe_osociales|floatformat:2|intcomma }}</td>
+                    <td style="text-align: right;">{{ totales.cierre_de_caja|floatformat:2|intcomma }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

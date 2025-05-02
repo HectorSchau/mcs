@@ -30,3 +30,9 @@ class CajaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['IdSucursal'].queryset = Sucursal.objects.all() # Asegura que solo se muestren las sucursales existentes
+
+class ReporteCajaSucursalForm(forms.Form):
+    fecha_reporte = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label='Fecha del Reporte'
+    )        

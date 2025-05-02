@@ -6,15 +6,16 @@ from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from .models import User
+from .models import Usuario, Caja, Sucursal
 from django.template import loader
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from json import dumps
 from django.http import JsonResponse
-from .forms import CajaForm
+from .forms import CajaForm, ReporteCajaSucursalForm
 from django.contrib import messages
+from django.db.models import Sum
 import json
 
 # Create your views here.
@@ -42,10 +43,13 @@ def crear_caja(request):
     if request.method == 'POST':
         form = CajaForm(request.POST)
         if form.is_valid():
-            form.save()
+            caja = form.save(commit=False)
+            caja.usuario = request.user  # Asigna el usuario actual
+            caja.save()
             mensaje = 'La caja se ha creado exitosamente.'
             tipo_mensaje = 'success'
-            return redirect('nombre_de_la_vista_de_exito') # Reemplaza con tu URL de éxito
+            #form.save()            
+            return redirect('menucaja') # Reemplaza con tu URL de éxito
         else:
             mensaje = 'Por favor, corrige los errores en el formulario.'
             tipo_mensaje = 'error'
@@ -108,7 +112,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = Usuario.objects.create_user(username, email, password)
             user.save()
             print("User: ", user)    
         except IntegrityError:
@@ -119,6 +123,225 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "plazoleta/register.html")    
+
+@login_required
+def reporte_caja_sucursalanterior(request):
+    reporte_data = None
+    fecha_reporte = None
+    totales = None
+
+    if request.method == 'POST':
+        form = ReporteCajaSucursalForm(request.POST)
+        if form.is_valid():
+            fecha_reporte = form.cleaned_data['fecha_reporte']
+
+            reporte_data = []
+            sucursales = Sucursal.objects.all()
+
+            total_saldo_inicial = 0
+            total_ventas = 0
+            total_operaciones = 0
+            total_efectivo = 0
+            total_importe_efectivo = 0
+            total_tarjetas = 0
+            total_importe_tarjetas = 0
+            total_particulares = 0
+            total_importe_particulares = 0
+            total_osociales = 0
+            total_importe_osociales = 0
+            total_cierre_de_caja = 0
+
+            for sucursal in sucursales:
+                cajas_sucursal = Caja.objects.filter(
+                    IdSucursal=sucursal,
+                    FechaHora__date=fecha_reporte
+                ).aggregate(
+                    total_saldo_inicial_sucursal=Sum('SaldoInicial'),
+                    total_importe_ventas_sucursal=Sum('ImporteVentas'),
+                    total_operaciones_sucursal=Sum('Operaciones'),
+                    total_efectivo_sucursal=Sum('Efectivo'),
+                    total_importe_efectivo_sucursal=Sum('ImporteEfectivo'),
+                    total_tarjetas_sucursal=Sum('Tarjetas'),
+                    total_importe_tarjetas_sucursal=Sum('ImporteTarjetas'),
+                    total_particulares_sucursal=Sum('Particulares'),
+                    total_importe_particulares_sucursal=Sum('ImporteParticulares'),
+                    total_osociales_sucursal=Sum('OSociales'),
+                    total_importe_osociales_sucursal=Sum('ImporteOSociales'),
+                )
+
+                saldo_inicial = cajas_sucursal['total_saldo_inicial_sucursal'] or 0
+                importe_ventas = cajas_sucursal['total_importe_ventas_sucursal'] or 0
+                operaciones = cajas_sucursal['total_operaciones_sucursal'] or 0
+                efectivo = cajas_sucursal['total_efectivo_sucursal'] or 0
+                importe_efectivo = cajas_sucursal['total_importe_efectivo_sucursal'] or 0
+                tarjetas = cajas_sucursal['total_tarjetas_sucursal'] or 0
+                importe_tarjetas = cajas_sucursal['total_importe_tarjetas_sucursal'] or 0
+                particulares = cajas_sucursal['total_particulares_sucursal'] or 0
+                importe_particulares = cajas_sucursal['total_importe_particulares_sucursal'] or 0
+                osociales = cajas_sucursal['total_osociales_sucursal'] or 0
+                importe_osociales = cajas_sucursal['total_importe_osociales_sucursal'] or 0
+
+                cierre_caja = saldo_inicial + importe_ventas
+                cajero = request.user.username
+
+                reporte_data.append({
+                    'sucursal': sucursal.NombreSuc,
+                    'saldo_inicial': saldo_inicial,
+                    'ventas': importe_ventas,
+                    'operaciones': operaciones,
+                    'efectivo': efectivo,
+                    'importe_efectivo': importe_efectivo,
+                    'tarjetas': tarjetas,
+                    'importe_tarjetas': importe_tarjetas,
+                    'particulares': particulares,
+                    'importe_particulares': importe_particulares,
+                    'obras_sociales': osociales,
+                    'importe_obras_sociales': importe_osociales,
+                    'cierre_de_caja': cierre_caja,
+                    'cajero': cajero,
+                })
+
+                total_saldo_inicial += saldo_inicial
+                total_ventas += importe_ventas
+                total_operaciones += operaciones
+                total_efectivo += efectivo
+                total_importe_efectivo += importe_efectivo
+                total_tarjetas += tarjetas
+                total_importe_tarjetas += importe_tarjetas
+                total_particulares += particulares
+                total_importe_particulares += importe_particulares
+                total_osociales += osociales
+                total_importe_osociales += importe_osociales
+                total_cierre_de_caja += cierre_caja
+
+            totales = {
+                'saldo_inicial': total_saldo_inicial,
+                'ventas': total_ventas,
+                'operaciones': total_operaciones,
+                'efectivo': total_efectivo,
+                'importe_efectivo': total_importe_efectivo,
+                'tarjetas': total_tarjetas,
+                'importe_tarjetas': total_importe_tarjetas,
+                'particulares': total_particulares,
+                'importe_particulares': total_importe_particulares,
+                'obras_sociales': total_osociales,
+                'importe_obras_sociales': total_importe_osociales,
+                'cierre_de_caja': total_cierre_de_caja,
+            }
+
+    else:
+        form = ReporteCajaSucursalForm()
+
+    return render(request, 'plazoleta/reporte_caja_sucursal.html', {
+        'form': form,
+        'reporte_data': reporte_data,
+        'fecha_reporte': fecha_reporte,
+        'totales': totales,
+    })
+
+@login_required
+def reporte_caja_sucursal(request):
+    reporte_data = None
+    fecha_reporte = None
+    totales = None
+
+    if request.method == 'POST':
+        form = ReporteCajaSucursalForm(request.POST)
+        if form.is_valid():
+            fecha_reporte = form.cleaned_data['fecha_reporte']
+
+            reporte_data = []
+            sucursales = Sucursal.objects.all()
+
+            total_saldo_inicial = 0
+            total_ventas = 0
+            total_operaciones = 0
+            total_efectivo = 0
+            total_importe_efectivo = 0
+            total_tarjetas = 0
+            total_importe_tarjetas = 0
+            total_particulares = 0
+            total_importe_particulares = 0
+            total_osociales = 0
+            total_importe_osociales = 0
+            total_cierre_de_caja = 0
+
+            for sucursal in sucursales:
+                cajas_sucursal = Caja.objects.filter(
+                    IdSucursal=sucursal,
+                    FechaHora__date=fecha_reporte
+                ).select_related('usuario') # Optimización para obtener el usuario relacionado
+
+                for caja in cajas_sucursal:
+                    cierre_caja = caja.SaldoInicial + caja.ImporteVentas
+                    cajero_username = caja.usuario.username if caja.usuario else '' # Obtener el username del usuario relacionado
+
+                    reporte_data.append({
+                        'sucursal': sucursal.NombreSuc,
+                        'saldo_inicial': caja.SaldoInicial,
+                        'ventas': caja.ImporteVentas,
+                        'operaciones': caja.Operaciones,
+                        'efectivo': int(caja.Efectivo),
+                        'importe_efectivo': caja.ImporteEfectivo,
+                        'tarjetas': int(caja.Tarjetas),
+                        'importe_tarjetas': caja.ImporteTarjetas,
+                        'particulares': int(caja.Particulares),
+                        'importe_particulares': caja.ImporteParticulares,
+                        'obras_sociales': int(caja.OSociales),
+                        'importe_osociales': caja.ImporteOSociales,
+                        'cierre_de_caja': cierre_caja,
+                        'cajero': cajero_username, # Usar el username del usuario relacionado
+                    })
+                    print("Sucursal: ", sucursal.NombreSuc)
+                    print("Cajero: ", cajero_username)
+                    print("Obras Sociales: ",caja.OSociales)
+                    print("Importe Obras Sociales: ",caja.ImporteOSociales)
+
+                    total_saldo_inicial += caja.SaldoInicial
+                    total_ventas += caja.ImporteVentas
+                    total_operaciones += caja.Operaciones
+                    total_efectivo += caja.Efectivo
+                    total_importe_efectivo += caja.ImporteEfectivo
+                    total_tarjetas += caja.Tarjetas
+                    total_importe_tarjetas += caja.ImporteTarjetas
+                    total_particulares += caja.Particulares
+                    total_importe_particulares += caja.ImporteParticulares
+                    total_osociales += caja.OSociales
+                    total_importe_osociales += caja.ImporteOSociales
+                    total_cierre_de_caja += cierre_caja
+                    print("Total Obras Sociales: ",total_osociales)
+                    print("Total Importe Obras Sociales: ",total_importe_osociales)
+
+            totales = {
+                'saldo_inicial': total_saldo_inicial,
+                'ventas': total_ventas,
+                'operaciones': total_operaciones,
+                'efectivo': int(total_efectivo),
+                'importe_efectivo': total_importe_efectivo,
+                'tarjetas': int(total_tarjetas),
+                'importe_tarjetas': total_importe_tarjetas,
+                'particulares': int(total_particulares),
+                'importe_particulares': total_importe_particulares,
+                'obras_sociales': int(total_osociales),
+                'importe_osociales': total_importe_osociales,
+                'cierre_de_caja': total_cierre_de_caja,
+            }
+            print("Total2 Obras Sociales: ",total_osociales)
+            print("Total2 Importe Obras Sociales: ",total_importe_osociales)
+            print(" ")
+
+    else:
+        form = ReporteCajaSucursalForm()
+
+    print("Reporte Data: ", reporte_data)
+    print("Totales: ", totales)
+
+    return render(request, 'plazoleta/reporte_caja_sucursal.html', {
+        'form': form,
+        'reporte_data': reporte_data,
+        'fecha_reporte': fecha_reporte,
+        'totales': totales,
+    })
 
 #Procedimiento original usando messages
 #def crear_caja(request):

@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('plazoleta/', include("plazoleta.urls")),
     path('', mcs_views.home, name='home'),  # Mapea la raíz a la función home
+    
 ]
