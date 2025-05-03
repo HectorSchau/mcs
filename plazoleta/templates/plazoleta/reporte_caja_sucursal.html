@@ -1,8 +1,12 @@
-<!DOCTYPE html>
+{% extends "plazoleta/layout.html" %}
 {% load humanize %}
-<html>
-<head>
-    <title>Reporte de Caja por Sucursal</title>
+{% load i18n %}
+
+{% block title %}
+    Reporte de Caja por Sucursal - Farmacias Plazoleta
+{% endblock %}
+
+{% block body %}
     <style>
         table {
             width: 100%;
@@ -87,9 +91,7 @@
             content: "$";
         }
     </style>
-</head>
-<body>
-    {% load humanize %}
+
     <h1>Reporte de Caja por Sucursal</h1>
 
     <form method="post">
@@ -99,7 +101,8 @@
     </form>
 
     {% if reporte_data %}
-        <h2>Fecha: {{ fecha_reporte }}</h2>
+        <!--<h2>Fecha: {{ fecha_reporte }}</h2>-->
+
         <table>
             <thead>
                 <tr>
@@ -157,5 +160,5 @@
             </tbody>
         </table>
     {% endif %}
-</body>
-</html>
+    <a href="{% url 'menucaja' %}">Volver al Menu de Caja Diaria</a>
+{% endblock %}

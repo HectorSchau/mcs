@@ -31,6 +31,10 @@ class CajaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['IdSucursal'].queryset = Sucursal.objects.all() # Asegura que solo se muestren las sucursales existentes
 
+class BuscarCajaForm(forms.Form):
+    IdSucursal = forms.ModelChoiceField(queryset=Sucursal.objects.all(), label='Sucursal')
+    FechaHora = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label='Fecha')
+
 class ReporteCajaSucursalForm(forms.Form):
     fecha_reporte = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),

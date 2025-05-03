@@ -1,7 +1,8 @@
-{% extends "plazoleta/layout.html" %}
+<!DOCTYPE html>
 {% load humanize %}
-
-    <h1>Reporte de Caja por Sucursal</h1>
+<html>
+<head>
+    <title>Reporte de Caja por Sucursal</title>
     <style>
         table {
             width: 100%;
@@ -86,7 +87,7 @@
             content: "$";
         }
     </style>
-
+</head>
 <body>
     {% load humanize %}
     <h1>Reporte de Caja por Sucursal</h1>
@@ -156,4 +157,6 @@
             </tbody>
         </table>
     {% endif %}
+    <a href="{% url 'menucaja' %}">Volver al Menu de Caja Diaria</a>
 </body>
+</html>

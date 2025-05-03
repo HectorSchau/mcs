@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -13,10 +13,12 @@ from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from json import dumps
 from django.http import JsonResponse
-from .forms import CajaForm, ReporteCajaSucursalForm
+from .forms import CajaForm, ReporteCajaSucursalForm, BuscarCajaForm
 from django.contrib import messages
 from django.db.models import Sum
 import json
+from django.utils import timezone
+from django import forms
 
 # Create your views here.
 def index(request):
@@ -57,6 +59,60 @@ def crear_caja(request):
         form = CajaForm()
 
     return render(request, 'plazoleta/crear_caja.html', {'form': form, 'mensaje': mensaje, 'tipo_mensaje': tipo_mensaje})    
+
+def crear_caja2(request):
+    caja_existente = None
+
+    if request.method == 'POST' and 'buscar' in request.POST:
+        buscar_form = BuscarCajaForm(request.POST)
+        if buscar_form.is_valid():
+            id_sucursal = buscar_form.cleaned_data['IdSucursal']
+            fecha_hora = buscar_form.cleaned_data['FechaHora']
+
+            try:
+                caja_existente = Caja.objects.get(IdSucursal=id_sucursal, FechaHora__date=fecha_hora)
+                # Mostrar formulario para modificar
+                form_modificar = CajaForm(instance=caja_existente)
+                return render(request, 'plazoleta/crear_caja2.html', {'form': form_modificar, 'caja_existente': caja_existente, 'buscar_form': buscar_form})
+            except Caja.DoesNotExist:
+                # Mostrar formulario para dar de alta (pre-llenando sucursal y fecha)
+                form_alta = CajaForm(initial={'IdSucursal': id_sucursal, 'FechaHora': fecha_hora})
+                return render(request, 'plazoleta/crear_caja2.html', {'form': form_alta, 'alta_nueva': True, 'buscar_form': buscar_form})
+        else:
+            # Si el formulario de búsqueda no es válido, volver a mostrarlo con errores
+            return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
+
+    elif request.method == 'POST' and 'guardar' in request.POST:
+        form = CajaForm(request.POST)
+        if form.is_valid():
+            if 'caja_existente_id' in request.POST:
+                # Se está modificando un registro existente
+                caja_id = request.POST['caja_existente_id']
+                caja_a_modificar = get_object_or_404(Caja, pk=caja_id)
+                form_guardar = CajaForm(request.POST, instance=caja_a_modificar)
+                if form_guardar.is_valid():
+                    caja = form_guardar.save(commit=False)
+                    caja.usuario = request.user  # Guarda el usuario que modifica
+                    caja.save()
+                    messages.success(request, 'Los cambios en la caja se han guardado exitosamente.')
+                    return redirect('menucaja')
+                else:
+                    # Si el formulario de modificación no es válido, volver a mostrarlo con errores
+                    return render(request, 'plazoleta/crear_caja2.html', {'form': form_guardar, 'caja_existente': caja_a_modificar, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+            else:
+                # Se está creando un nuevo registro
+                caja = form.save(commit=False)
+                caja.usuario = request.user  # Guarda el usuario que crea
+                caja.save()
+                messages.success(request, 'La nueva caja se ha creado exitosamente.')
+                return redirect('menucaja')
+        else:
+            # Si el formulario de alta/modificación no es válido, volver a mostrarlo con errores
+            return render(request, 'plazoleta/crear_caja2.html', {'form': form, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+
+    else: # GET request: mostrar el formulario de búsqueda inicial
+        buscar_form = BuscarCajaForm()
+        return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
 
 def verificar_loaders(request):
     django_engine = engines['django']

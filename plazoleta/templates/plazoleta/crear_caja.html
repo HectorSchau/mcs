@@ -1,17 +1,19 @@
+{% extends "plazoleta/layout.html" %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Crear Caja</title>
+{% block title %}
+    Crear Nueva Caja - Farmacias Plazoleta
+{% endblock %}
+
+{% block body %}
     <style>
         .success { color: green; margin-bottom: 10px; }
         .error { color: red; margin-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .errorlist { color: red; }
     </style>
-</head>
-<body>
+
     <h1>Crear Nueva Caja</h1>
 
     {% if mensaje %}
@@ -42,9 +44,7 @@
     </form>
 
     <a href="{% url 'menucaja' %}">Volver al menucaja</a>
-
-</body>
-</html>
+{% endblock %}
 
 {% comment %} 
 HTML @da version que tampoco funciono
