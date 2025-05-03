@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from .models import Usuario, Caja, Sucursal
+from .models import Usuario, Caja, Sucursal, HistorialCaja
 from django.template import loader
 from django.shortcuts import render
 from django.core.paginator import Paginator
@@ -60,7 +60,7 @@ def crear_caja(request):
 
     return render(request, 'plazoleta/crear_caja.html', {'form': form, 'mensaje': mensaje, 'tipo_mensaje': tipo_mensaje})    
 
-def crear_caja2(request):
+def crear_caja2old(request):
     caja_existente = None
 
     if request.method == 'POST' and 'buscar' in request.POST:
@@ -111,6 +111,78 @@ def crear_caja2(request):
             return render(request, 'plazoleta/crear_caja2.html', {'form': form, 'buscar_form': BuscarCajaForm(initial=request.POST)})
 
     else: # GET request: mostrar el formulario de búsqueda inicial
+        buscar_form = BuscarCajaForm()
+        return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
+
+def guardar_historial_caja(caja, tipo_movimiento, usuario):
+    HistorialCaja.objects.create(
+        IdCaja=caja,
+        TipoMovimiento=tipo_movimiento,
+        Usuario=usuario,
+        SaldoInicial=caja.SaldoInicial,
+        ImporteVentas=caja.ImporteVentas,
+        ImporteEfectivo=caja.ImporteEfectivo,
+        ImporteTarjetas=caja.ImporteTarjetas,
+        ImporteParticulares=caja.ImporteParticulares,
+        ImporteOSociales=caja.ImporteOSociales,
+        HoraInicio=caja.HoraInicio,
+        HoraCierre=caja.HoraCierre,
+        Operaciones=caja.Operaciones,
+        Efectivo=caja.Efectivo,
+        Tarjetas=caja.Tarjetas,
+        Particulares=caja.Particulares,
+        OSociales=caja.OSociales,
+        # ... incluye aquí todos los campos de Caja que historizaste
+    )
+
+def crear_caja2(request):
+    caja_existente = None
+
+    if request.method == 'POST' and 'buscar' in request.POST:
+        buscar_form = BuscarCajaForm(request.POST)
+        if buscar_form.is_valid():
+            id_sucursal = buscar_form.cleaned_data['IdSucursal']
+            fecha_hora = buscar_form.cleaned_data['FechaHora']
+
+            try:
+                caja_existente = Caja.objects.get(IdSucursal=id_sucursal, FechaHora__date=fecha_hora)
+                form_modificar = CajaForm(instance=caja_existente)
+                return render(request, 'plazoleta/crear_caja2.html', {'form': form_modificar, 'caja_existente': caja_existente, 'buscar_form': buscar_form})
+            except Caja.DoesNotExist:
+                form_alta = CajaForm(initial={'IdSucursal': id_sucursal, 'FechaHora': fecha_hora})
+                return render(request, 'plazoleta/crear_caja2.html', {'form': form_alta, 'alta_nueva': True, 'buscar_form': buscar_form})
+        else:
+            return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
+
+    elif request.method == 'POST' and 'guardar' in request.POST:
+        form = CajaForm(request.POST)
+        if form.is_valid():
+            if 'caja_existente_id' in request.POST:
+                # Modificación
+                caja_id = request.POST['caja_existente_id']
+                caja_a_modificar = get_object_or_404(Caja, pk=caja_id)
+                form_guardar = CajaForm(request.POST, instance=caja_a_modificar)
+                if form_guardar.is_valid():
+                    caja = form_guardar.save(commit=False)
+                    caja.usuario = request.user  # Asigna el usuario que modifica
+                    caja.save()
+                    guardar_historial_caja(caja, 'MODIFICACION', request.user)
+                    messages.success(request, 'Los cambios en la caja se han guardado exitosamente.')
+                    return redirect('menucaja')
+                else:
+                    return render(request, 'plazoleta/crear_caja2.html', {'form': form_guardar, 'caja_existente': caja_a_modificar, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+            else:
+                # Alta
+                caja = form.save(commit=False)
+                caja.usuario = request.user  # Asigna el usuario que crea
+                caja.save()
+                guardar_historial_caja(caja, 'ALTA', request.user)
+                messages.success(request, 'La nueva caja se ha creado exitosamente.')
+                return redirect('menucaja')
+        else:
+            return render(request, 'plazoleta/crear_caja2.html', {'form': form, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+
+    else: # GET request
         buscar_form = BuscarCajaForm()
         return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
 

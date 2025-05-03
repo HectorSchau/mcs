@@ -35,7 +35,6 @@ class Usuario(AbstractUser):  # Nombre de la clase ahora es 'Usuario'
     def __str__(self):
         return f"{self.id}: {self.username}"
 
-
 class Sucursal(models.Model):
     IdSucursal = models.AutoField(primary_key=True)
     NombreSuc = models.CharField(max_length=50)
@@ -73,6 +72,45 @@ class Caja(models.Model):
 
     def __str__(self):
         return f"Caja {self.IdCaja} - Sucursal {self.IdSucursal.NombreSuc} - {self.FechaHora}"
+
+class HistorialCaja(models.Model):
+    TIPO_MOVIMIENTO_CHOICES = [
+        ('ALTA', 'Alta'),
+        ('MODIFICACION', 'Modificación'),
+        ('BAJA', 'Baja'),
+    ]
+
+    IdHistorialCaja = models.AutoField(primary_key=True)
+    IdCaja = models.ForeignKey('Caja', on_delete=models.CASCADE)
+    FechaHoraMovimiento = models.DateTimeField(auto_now_add=True)
+    TipoMovimiento = models.CharField(max_length=20, choices=TIPO_MOVIMIENTO_CHOICES)
+    Usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Usuario',
+        related_name='historial_cajas'
+    )
+    # Puedes optar por guardar una copia de los datos de la caja en el momento del movimiento
+    # para tener un historial completo de los valores. Por ejemplo:
+    SaldoInicial = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ImporteVentas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ImporteEfectivo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ImporteTarjetas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ImporteParticulares = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    ImporteOSociales = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    HoraInicio = models.TimeField(null=True, blank=True)
+    HoraCierre = models.TimeField(null=True, blank=True)
+    Operaciones = models.IntegerField(default=0, null=True, blank=True)
+    Efectivo = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
+    Tarjetas = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
+    Particulares = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
+    OSociales = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
+    # ... puedes incluir todos los campos de Caja que quieras historizar
+
+    def __str__(self):
+        return f"Movimiento {self.TipoMovimiento} en Caja {self.IdCaja.IdCaja} por {self.Usuario}"
 
 class OSociales(models.Model):
     IdOS = models.AutoField(primary_key=True)
