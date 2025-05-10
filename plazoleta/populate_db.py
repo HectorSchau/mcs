@@ -37,6 +37,19 @@ def populate():
     else:
         print(f"Usuario '{carlos.username}' ya existe.")
 
+    leon, created = Usuario.objects.get_or_create(
+        username='LGieco',
+        first_name='Leon',
+        last_name='Gieco',
+        email='leon.gieco@example.com'  # Añade un email si es necesario
+    )
+    if created:
+        leon.set_password('123456')
+        leon.save()
+        print(f"Usuario '{leon.username}' creado.")
+    else:
+        print(f"Usuario '{leon.username}' ya existe.")        
+
     print("\nCreando sucursales...")
     casa_central, created = Sucursal.objects.get_or_create(
         NombreSuc='CASA CENTRAL',
@@ -64,6 +77,60 @@ def populate():
         print(f"Sucursal '{zona_sur.NombreSuc}' creada.")
     else:
         print(f"Sucursal '{zona_sur.NombreSuc}' ya existe.")
+
+    yerba, created = Sucursal.objects.get_or_create(
+        NombreSuc='YERBA BUENA',
+        Direccion='Av. Aconquija 2099'
+    )
+    if created:
+        print(f"Sucursal '{yerba.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{yerba.NombreSuc}' ya existe.")    
+
+    belgrano, created = Sucursal.objects.get_or_create(
+        NombreSuc='ZONA AV. BELGRANO',
+        Direccion='Av. Belgrano 1625'
+    )
+    if created:
+        print(f"Sucursal '{belgrano.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{belgrano.NombreSuc}' ya existe.")       
+
+    parque, created = Sucursal.objects.get_or_create(
+        NombreSuc='ZONA DEL PARQUE',
+        Direccion='Av. Soldati 86 ( Complejo Refinor)'
+    )
+    if created:
+        print(f"Sucursal '{parque.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{parque.NombreSuc}' ya existe.")      
+
+    roca, created = Sucursal.objects.get_or_create(
+        NombreSuc='ZONA AV. ROCA',
+        Direccion='Av. Kirchner 2310- L5'
+    )
+    if created:
+        print(f"Sucursal '{roca.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{roca.NombreSuc}' ya existe.")    
+
+    centro, created = Sucursal.objects.get_or_create(
+        NombreSuc='ZONA CENTRO',
+        Direccion='Santiago 598'
+    )
+    if created:
+        print(f"Sucursal '{centro.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{centro.NombreSuc}' ya existe.")    
+
+    mendoza, created = Sucursal.objects.get_or_create(
+        NombreSuc='PEATONAL MENDOZA',
+        Direccion='Mendoza 795'
+    )
+    if created:
+        print(f"Sucursal '{mendoza.NombreSuc}' creada.")
+    else:
+        print(f"Sucursal '{mendoza.NombreSuc}' ya existe.")    
 
     print("\nCreando registros de caja...")
     fecha_hora_caja1 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
@@ -119,6 +186,33 @@ def populate():
         print(f"Registro de caja para Sucursal '{zona_norte.NombreSuc}' creado.")
     else:
         print(f"Registro de caja para Sucursal '{zona_norte.NombreSuc}' ya existe.")
+
+    fecha_hora_caja3 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
+    hora_inicio_caja3 = timezone.datetime(2025, 5, 30, 9, 0, 0).time()
+    hora_cierre_caja3 = timezone.datetime(2025, 5, 30, 14, 0, 0).time()
+
+    caja2, created = Caja.objects.get_or_create(
+        IdSucursal=zona_sur,
+        FechaHora=fecha_hora_caja3,
+        SaldoInicial=10000,
+        ImporteVentas=2340000,
+        ImporteEfectivo=1000000,
+        ImporteTarjetas=1340000,
+        ImporteParticulares=340000,
+        ImporteOSociales=2000000,
+        HoraInicio=hora_inicio_caja3,
+        HoraCierre=hora_cierre_caja3,
+        Operaciones=130,
+        Efectivo=104,
+        Tarjetas=26,
+        Particulares=52,
+        OSociales=78,
+        usuario=leon
+    )
+    if created:
+        print(f"Registro de caja para Sucursal '{zona_sur.NombreSuc}' creado.")
+    else:
+        print(f"Registro de caja para Sucursal '{zona_sur.NombreSuc}' ya existe.")    
 
 if __name__ == '__main__':
     populate()
