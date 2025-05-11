@@ -50,6 +50,58 @@ def populate():
     else:
         print(f"Usuario '{leon.username}' ya existe.")        
 
+    espinetta, created = Usuario.objects.get_or_create(
+        username='LEspinetta',
+        first_name='Luis',
+        last_name='Espinetta',
+        email='luis.espinetta@example.com'  # Añade un email si es necesario
+    )
+    if created:
+        espinetta.set_password('123456')
+        espinetta.save()
+        print(f"Usuario '{espinetta.username}' creado.")
+    else:
+        print(f"Usuario '{espinetta.username}' ya existe.")       
+
+    david, created = Usuario.objects.get_or_create(
+        username='DLebon',
+        first_name='Davis',
+        last_name='Lebon',
+        email='david.lebon@example.com'  # Añade un email si es necesario
+    )
+    if created:
+        david.set_password('123456')
+        david.save()
+        print(f"Usuario '{david.username}' creado.")
+    else:
+        print(f"Usuario '{david.username}' ya existe.")     
+
+    pedro, created = Usuario.objects.get_or_create(
+        username='PAznar',
+        first_name='Pedro',
+        last_name='Aznar',
+        email='pedro.aznar@example.com'  # Añade un email si es necesario
+    )
+    if created:
+        pedro.set_password('123456')
+        pedro.save()
+        print(f"Usuario '{pedro.username}' creado.")
+    else:
+        print(f"Usuario '{pedro.username}' ya existe.")       
+
+    nito, created = Usuario.objects.get_or_create(
+        username='NMestre',
+        first_name='Nito',
+        last_name='Mestre',
+        email='nito.mestre@example.com'  # Añade un email si es necesario
+    )
+    if created:
+        nito.set_password('123456')
+        nito.save()
+        print(f"Usuario '{nito.username}' creado.")
+    else:
+        print(f"Usuario '{nito.username}' ya existe.")      
+
     print("\nCreando sucursales...")
     casa_central, created = Sucursal.objects.get_or_create(
         NombreSuc='CASA CENTRAL',
@@ -213,6 +265,117 @@ def populate():
         print(f"Registro de caja para Sucursal '{zona_sur.NombreSuc}' creado.")
     else:
         print(f"Registro de caja para Sucursal '{zona_sur.NombreSuc}' ya existe.")    
+
+    fecha_hora_caja4 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
+    hora_inicio_caja4 = timezone.datetime(2025, 5, 30, 9, 0, 0).time()
+    hora_cierre_caja4 = timezone.datetime(2025, 5, 30, 14, 0, 0).time()
+
+    caja2, created = Caja.objects.get_or_create(
+        IdSucursal=yerba,
+        FechaHora=fecha_hora_caja4,
+        SaldoInicial=10000,
+        ImporteVentas=2800000,
+        ImporteEfectivo=80800,
+        ImporteTarjetas=200000,
+        ImporteParticulares=70800,
+        ImporteOSociales=210000,
+        HoraInicio=hora_inicio_caja4,
+        HoraCierre=hora_cierre_caja4,
+        Operaciones=156,
+        Efectivo=125,
+        Tarjetas=31,
+        Particulares=62,
+        OSociales=94,
+        usuario=espinetta
+    )
+    if created:
+        print(f"Registro de caja para Sucursal '{yerba.NombreSuc}' creado.")
+    else:
+        print(f"Registro de caja para Sucursal '{yerba.NombreSuc}' ya existe.")    
+
+    fecha_hora_caja5 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
+    hora_inicio_caja5 = timezone.datetime(2025, 5, 30, 9, 0, 0).time()
+    hora_cierre_caja5 = timezone.datetime(2025, 5, 30, 14, 0, 0).time()
+
+    caja2, created = Caja.objects.get_or_create(
+        IdSucursal=belgrano,
+        FechaHora=fecha_hora_caja5,
+        SaldoInicial=10000,
+        ImporteVentas=169200,
+        ImporteEfectivo=100000,
+        ImporteTarjetas=69200,
+        ImporteParticulares=9200,
+        ImporteOSociales=160000,
+        HoraInicio=hora_inicio_caja5,
+        HoraCierre=hora_cierre_caja5,
+        Operaciones=94,
+        Efectivo=75,
+        Tarjetas=19,
+        Particulares=38,
+        OSociales=56,
+        usuario=david
+    )
+    if created:
+        print(f"Registro de caja para Sucursal '{belgrano.NombreSuc}' creado.")
+    else:
+        print(f"Registro de caja para Sucursal '{belgrano.NombreSuc}' ya existe.")        
+
+    #Caja 6
+    fecha_hora_caja6 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
+    hora_inicio_caja6 = timezone.datetime(2025, 5, 30, 9, 0, 0).time()
+    hora_cierre_caja6 = timezone.datetime(2025, 5, 30, 14, 0, 0).time()
+
+    caja2, created = Caja.objects.get_or_create(
+        IdSucursal=parque,
+        FechaHora=fecha_hora_caja6,
+        SaldoInicial=10000,
+        ImporteVentas=135000,
+        ImporteEfectivo=35000,
+        ImporteTarjetas=100000,
+        ImporteParticulares=30000,
+        ImporteOSociales=105000,
+        HoraInicio=hora_inicio_caja6,
+        HoraCierre=hora_cierre_caja6,
+        Operaciones=75,
+        Efectivo=60,
+        Tarjetas=15,
+        Particulares=30,
+        OSociales=45,
+        usuario=pedro
+    )
+    if created:
+        print(f"Registro de caja para Sucursal '{parque.NombreSuc}' creado.")
+    else:
+        print(f"Registro de caja para Sucursal '{parque.NombreSuc}' ya existe.")      
+
+    #Caja 7
+    fecha_hora_caja7 = timezone.datetime(2025, 5, 30, 9, 0, 0, tzinfo=timezone.get_current_timezone())
+    hora_inicio_caja7 = timezone.datetime(2025, 5, 30, 9, 0, 0).time()
+    hora_cierre_caja7 = timezone.datetime(2025, 5, 30, 14, 0, 0).time()
+
+    caja2, created = Caja.objects.get_or_create(
+        IdSucursal=roca,
+        FechaHora=fecha_hora_caja7,
+        SaldoInicial=10000,
+        ImporteVentas=500400,
+        ImporteEfectivo=100000,
+        ImporteTarjetas=400400,
+        ImporteParticulares=400,
+        ImporteOSociales=500000,
+        HoraInicio=hora_inicio_caja7,
+        HoraCierre=hora_cierre_caja7,
+        Operaciones=28,
+        Efectivo=22,
+        Tarjetas=6,
+        Particulares=11,
+        OSociales=17,
+        usuario=nito
+    )
+    if created:
+        print(f"Registro de caja para Sucursal '{roca.NombreSuc}' creado.")
+    else:
+        print(f"Registro de caja para Sucursal '{roca.NombreSuc}' ya existe.")           
+
 
 if __name__ == '__main__':
     populate()
