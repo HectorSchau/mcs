@@ -62,13 +62,30 @@ Below are the key screens of the application, along with brief descriptions of t
 This is the application's welcome screen. It represents the fictional company MCS, which provides system services to the businesses Plazoleta Pharmacies and Ledesma Sugar Mill. To proceed, please click the button "Plazoleta Pharmacies".
 ![Welcome Screen](screenshots/S1.png)
 
+2. Login Screen  
+After clicking the "Plazoleta Pharmacies" button, the user is directed to the login screen, where they must enter their username and password.
 ![Welcome Screen](screenshots/S2.png)
 
+3. User Authentication
+Once entered, clicking "Login" grants access to the main application interface.
+To access the system, users must enter the provided demo credentials:
+```bash
+   Username: guess  
+   Password: 123456
+   ```
 ![Welcome Screen](screenshots/S3.png)
 
+4. Plazoleta Pharmacies Dashboard  
+After successful login, the user is presented with the main options inside Plazoleta Pharmacies. To continue, please click the button "Daily Cash", which will lead to the next section.
 ![Welcome Screen](screenshots/S4.png)
 
+5. Cash Management Options  
+This screen presents two options:
+- "Cash Report by Branch" – Displays a report of cash data preloaded for May 30, 2025, categorized by branch.
+- "Cash Data Entry by Branch" – Allows users to input their own preferences and see how different data would affect the report
 ![Welcome Screen](screenshots/S5.png)
 
+6. Cash Report Generation  
+After selecting May 30, 2025 in the "Report Date" field and clicking the "Generate Report" button, the system displays the cash report for the selected date.
 ![Welcome Screen](screenshots/S6.png)
 
