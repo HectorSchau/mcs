@@ -30,5 +30,14 @@ This application interacts with a **SQLite database** to **add, modify, and dele
    ```bash
    python manage.py runserver
 5. Access the app in your browser at http://127.0.0.1:8000/.
-   
+
+## **How to Access the Live Version**   
+For testing the deployed version, use the Live Demo link above.
+If authentication is required, use the following demo credentials:
+   ```bash
+   Username: guess  
+   Password: 123456
+
+If credentials are not provided here, please reach out to request access.
+
    
