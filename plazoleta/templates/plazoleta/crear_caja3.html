@@ -1,0 +1,48 @@
+{% extends "plazoleta/layout.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+    Crear / Modificar / Dar de Baja Caja - Farmacias Plazoleta
+{% endblock %}
+
+{% block body %}
+    <h1>Crear / Modificar / Dar de Baja Caja</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h2>Buscar Caja Existente</h2>
+    <form method="post" action="{% url 'crear_caja3' %}">
+        {% csrf_token %}
+        {{ buscar_form|crispy }}
+        <button type="submit" name="buscar">Buscar</button>
+    </form>
+    <hr>
+
+    {% if form and caja_existente %}
+        <h2>Modificar / Dar de Baja Caja</h2>
+        <form method="post" action="{% url 'crear_caja3' %}">
+            {% csrf_token %}
+            <input type="hidden" name="caja_existente_id" value="{{ caja_existente.IdCaja }}">
+            {{ form|crispy }}
+            <button type="submit" name="guardar">Guardar Caja</button>
+            <button type="submit" name="dar_de_baja" class="btn btn-danger">Dar de Baja Caja</button>
+            <a href="{% url 'menucaja' %}">Volver al menucaja</a>
+        </form>
+    {% elif form and alta_nueva %}
+        <h2>Crear Nueva Caja</h2>
+        <form method="post" action="{% url 'crear_caja3' %}">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" name="guardar">Grabar Caja</button>
+            <a href="{% url 'menucaja' %}">Volver al menucaja</a>
+        </form>
+    {% endif %}
+
+{% endblock %}

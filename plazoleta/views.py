@@ -25,10 +25,10 @@ def index(request):
     return render(request,"plazoleta/index.html")
 
 def menucaja(request):
-    print("Verificar loaders:")
+    #print("Verificar loaders:")
     #verificar_loaders(request)  # Llama a la función para verificar los loaders
-    print(" ")
-    print("Prueba mensajes:")
+    #print(" ")
+    #print("Prueba mensajes:")
     #prueba_mensajes(request)  # Llama a la función para mostrar el mensaje de prueba
     return render(request,"plazoleta/menucaja.html")    
 
@@ -114,27 +114,6 @@ def crear_caja2old(request):
         buscar_form = BuscarCajaForm()
         return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
 
-def guardar_historial_caja(caja, tipo_movimiento, usuario):
-    HistorialCaja.objects.create(
-        IdCaja=caja,
-        TipoMovimiento=tipo_movimiento,
-        Usuario=usuario,
-        SaldoInicial=caja.SaldoInicial,
-        ImporteVentas=caja.ImporteVentas,
-        ImporteEfectivo=caja.ImporteEfectivo,
-        ImporteTarjetas=caja.ImporteTarjetas,
-        ImporteParticulares=caja.ImporteParticulares,
-        ImporteOSociales=caja.ImporteOSociales,
-        HoraInicio=caja.HoraInicio,
-        HoraCierre=caja.HoraCierre,
-        Operaciones=caja.Operaciones,
-        Efectivo=caja.Efectivo,
-        Tarjetas=caja.Tarjetas,
-        Particulares=caja.Particulares,
-        OSociales=caja.OSociales,
-        # ... incluye aquí todos los campos de Caja que historizaste
-    )
-
 def crear_caja2(request):
     caja_existente = None
 
@@ -166,7 +145,7 @@ def crear_caja2(request):
                     caja = form_guardar.save(commit=False)
                     caja.usuario = request.user  # Asigna el usuario que modifica
                     caja.save()
-                    guardar_historial_caja(caja, 'MODIFICACION', request.user)
+                    guardar_historial_caja(caja, 'MODIFICACION', request.user, id_sucursal)
                     messages.success(request, 'Los cambios en la caja se han guardado exitosamente.')
                     return redirect('menucaja')
                 else:
@@ -176,7 +155,7 @@ def crear_caja2(request):
                 caja = form.save(commit=False)
                 caja.usuario = request.user  # Asigna el usuario que crea
                 caja.save()
-                guardar_historial_caja(caja, 'ALTA', request.user)
+                guardar_historial_caja(caja, 'ALTA', request.user, id_sucursal)
                 messages.success(request, 'La nueva caja se ha creado exitosamente.')
                 return redirect('menucaja')
         else:
@@ -185,6 +164,166 @@ def crear_caja2(request):
     else: # GET request
         buscar_form = BuscarCajaForm()
         return render(request, 'plazoleta/crear_caja2.html', {'buscar_form': buscar_form})
+
+def guardar_historial_caja(caja, tipo_movimiento, usuario):
+    print("Estoy en historial de caja...")
+    print("Caja: ", caja, "Tipo de movimiento: ", tipo_movimiento)
+    HistorialCaja.objects.create(
+        IdCaja=caja,
+        TipoMovimiento=tipo_movimiento,
+        Usuario=usuario,
+        SaldoInicial=caja.SaldoInicial,
+        ImporteVentas=caja.ImporteVentas,
+        ImporteEfectivo=caja.ImporteEfectivo,
+        ImporteTarjetas=caja.ImporteTarjetas,
+        ImporteParticulares=caja.ImporteParticulares,
+        ImporteOSociales=caja.ImporteOSociales,
+        HoraInicio=caja.HoraInicio,
+        HoraCierre=caja.HoraCierre,
+        Operaciones=caja.Operaciones,
+        Efectivo=caja.Efectivo,
+        Tarjetas=caja.Tarjetas,
+        Particulares=caja.Particulares,
+        OSociales=caja.OSociales,
+        IdSucursal=caja.IdSucursal,  # Guarda la sucursal
+    )
+
+def crear_caja3(request):
+    caja_existente = None
+    buscar_form = BuscarCajaForm()
+    form_modificar = None
+    form_alta = None
+
+    if request.method == 'POST':
+        if 'buscar' in request.POST:
+            buscar_form = BuscarCajaForm(request.POST)
+            if buscar_form.is_valid():
+                id_sucursal = buscar_form.cleaned_data['IdSucursal']
+                fecha_hora = buscar_form.cleaned_data['FechaHora']
+
+                try:
+                    caja_existente = Caja.objects.get(IdSucursal=id_sucursal, FechaHora__date=fecha_hora)
+                    form_modificar = CajaForm(instance=caja_existente)
+                    return render(request, 'plazoleta/crear_caja3.html', {'form': form_modificar, 'caja_existente': caja_existente, 'buscar_form': buscar_form})
+                except Caja.DoesNotExist:
+                    form_alta = CajaForm(initial={'IdSucursal': id_sucursal, 'FechaHora': fecha_hora})
+                    return render(request, 'plazoleta/crear_caja3.html', {'form': form_alta, 'alta_nueva': True, 'buscar_form': buscar_form})
+            else:
+                return render(request, 'plazoleta/crear_caja3.html', {'buscar_form': buscar_form})
+
+        elif 'guardar' in request.POST:
+            form = CajaForm(request.POST)
+            if form.is_valid():
+                if 'caja_existente_id' in request.POST:
+                    # Modificación
+                    caja_id = request.POST['caja_existente_id']
+                    caja_a_modificar = get_object_or_404(Caja, pk=caja_id)
+                    form_guardar = CajaForm(request.POST, instance=caja_a_modificar)
+                    if form_guardar.is_valid():
+                        caja = form_guardar.save(commit=False)
+                        caja.usuario = request.user  # Asigna el usuario que modifica
+                        caja.save()
+                        guardar_historial_caja(caja, 'MODIFICACION', request.user)
+                        messages.success(request, 'Los cambios en la caja se han guardado exitosamente.')
+                        return redirect('menucaja')
+                    else:
+                        return render(request, 'plazoleta/crear_caja3.html', {'form': form_guardar, 'caja_existente': caja_a_modificar, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+                else:
+                    # Alta
+                    caja = form.save(commit=False)                    
+                    caja.usuario = request.user  # Asigna el usuario que crea
+                    caja.save()
+                    print(" ")
+                    print("Caja a guardar:", caja)
+                    print(" ")
+                    guardar_historial_caja(caja, 'ALTA', request.user)
+                    messages.success(request, 'La nueva caja se ha creado exitosamente.')
+                    return redirect('menucaja')
+            else:
+                return render(request, 'plazoleta/crear_caja3.html', {'form': form, 'buscar_form': BuscarCajaForm(initial=request.POST)})
+
+        elif 'dar_de_baja' in request.POST:
+            caja_id_baja = request.POST.get('caja_existente_id')
+            print(" ")
+            print("Id Caja a dar de baja:", caja_id_baja)
+            print(" ")
+            if caja_id_baja:
+                try:
+                    caja_a_dar_de_baja = get_object_or_404(Caja, pk=caja_id_baja)
+                    print(" ")
+                    print("Caja a dar de baja:", caja_a_dar_de_baja)
+                    print(" ")
+                    usuario_a_guardar = request.user
+                    #sucursal = caja_a_dar_de_baja.IdSucursal.id
+                    sucursal = caja_a_dar_de_baja.IdSucursal
+
+                    # 1. Copia los datos de la caja *antes* de eliminarla
+                    historial_data = {
+                        'IdCaja': caja_a_dar_de_baja,
+                        'TipoMovimiento': 'BAJA',
+                        'Usuario': usuario_a_guardar,
+                        'SaldoInicial': caja_a_dar_de_baja.SaldoInicial,
+                        'ImporteVentas': caja_a_dar_de_baja.ImporteVentas,
+                        'ImporteEfectivo': caja_a_dar_de_baja.ImporteEfectivo,
+                        'ImporteTarjetas': caja_a_dar_de_baja.ImporteTarjetas,
+                        'ImporteParticulares': caja_a_dar_de_baja.ImporteParticulares,
+                        'ImporteOSociales': caja_a_dar_de_baja.ImporteOSociales,
+                        'HoraInicio': caja_a_dar_de_baja.HoraInicio,
+                        'HoraCierre': caja_a_dar_de_baja.HoraCierre,
+                        'Operaciones': caja_a_dar_de_baja.Operaciones,
+                        'Efectivo': caja_a_dar_de_baja.Efectivo,
+                        'Tarjetas': caja_a_dar_de_baja.Tarjetas,
+                        'Particulares': caja_a_dar_de_baja.Particulares,
+                        'OSociales': caja_a_dar_de_baja.OSociales,
+                        #'IdSucursal_id': sucursal,
+                        'IdSucursal': sucursal,
+                    }
+
+                    print(" ")
+                    print("historial_data: ", historial_data)
+                    print(" ")
+
+                    # 2. Elimina la Caja *primero*
+                    caja_a_dar_de_baja.delete()
+
+                    # 3. Actualiza los registros de historial relacionados
+                    HistorialCaja.objects.filter(IdCaja_id=caja_id_baja).update(IdCaja=None)
+
+
+                    # 4. Crea el registro de historial *después* de eliminar la caja
+                    HistorialCaja.objects.create(
+                        IdCaja=None, # Cambiado a None
+                        TipoMovimiento=historial_data['TipoMovimiento'],
+                        Usuario=historial_data['Usuario'],
+                        SaldoInicial=historial_data['SaldoInicial'],
+                        ImporteVentas=historial_data['ImporteVentas'],
+                        ImporteEfectivo=historial_data['ImporteEfectivo'],
+                        ImporteTarjetas=historial_data['ImporteTarjetas'],
+                        ImporteParticulares=historial_data['ImporteParticulares'],
+                        ImporteOSociales=historial_data['ImporteOSociales'],
+                        HoraInicio=historial_data['HoraInicio'],
+                        HoraCierre=historial_data['HoraCierre'],
+                        Operaciones=historial_data['Operaciones'],
+                        Efectivo=historial_data['Efectivo'],
+                        Tarjetas=historial_data['Tarjetas'],
+                        Particulares=historial_data['Particulares'],
+                        OSociales=historial_data['OSociales'],
+                        #IdSucursal_id=historial_data['IdSucursal_id'],
+                        IdSucursal=historial_data['IdSucursal'],
+                    )
+
+                    messages.success(request, 'La caja se ha dado de baja exitosamente.')
+                    return redirect('menucaja')
+                except Caja.DoesNotExist:
+                    messages.error(request, 'No se encontró la caja a dar de baja.')
+                    return redirect('menucaja')
+            else:
+                messages.error(request, 'No se especificó la caja a dar de baja.')
+                return redirect('menucaja')
+
+    else:  # GET request
+        return render(request, 'plazoleta/crear_caja3.html', {'buscar_form': buscar_form})
+
 
 def verificar_loaders(request):
     django_engine = engines['django']
@@ -204,10 +343,10 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
-        print("username en login:", username)
-        print("password en login:", password)
+        #print("username en login:", username)
+        #print("password en login:", password)
         user = authenticate(request, username=username, password=password)
-        print("User en login:", user)
+        #print("User en login:", user)
 
         # Check if authentication successful
         if user is not None:
@@ -228,7 +367,7 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
-        print("Username: ", username)    
+        #print("Username: ", username)    
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -420,10 +559,10 @@ def reporte_caja_sucursal(request):
                         'cierre_de_caja': cierre_caja,
                         'cajero': cajero_username, # Usar el username del usuario relacionado
                     })
-                    print("Sucursal: ", sucursal.NombreSuc)
-                    print("Cajero: ", cajero_username)
-                    print("Obras Sociales: ",caja.OSociales)
-                    print("Importe Obras Sociales: ",caja.ImporteOSociales)
+                    #print("Sucursal: ", sucursal.NombreSuc)
+                    #print("Cajero: ", cajero_username)
+                    #print("Obras Sociales: ",caja.OSociales)
+                    #print("Importe Obras Sociales: ",caja.ImporteOSociales)
 
                     total_saldo_inicial += caja.SaldoInicial
                     total_ventas += caja.ImporteVentas
@@ -437,8 +576,8 @@ def reporte_caja_sucursal(request):
                     total_osociales += caja.OSociales
                     total_importe_osociales += caja.ImporteOSociales
                     total_cierre_de_caja += cierre_caja
-                    print("Total Obras Sociales: ",total_osociales)
-                    print("Total Importe Obras Sociales: ",total_importe_osociales)
+                    #print("Total Obras Sociales: ",total_osociales)
+                    #print("Total Importe Obras Sociales: ",total_importe_osociales)
 
             totales = {
                 'saldo_inicial': total_saldo_inicial,
@@ -454,15 +593,15 @@ def reporte_caja_sucursal(request):
                 'importe_osociales': total_importe_osociales,
                 'cierre_de_caja': total_cierre_de_caja,
             }
-            print("Total2 Obras Sociales: ",total_osociales)
-            print("Total2 Importe Obras Sociales: ",total_importe_osociales)
-            print(" ")
+            #print("Total2 Obras Sociales: ",total_osociales)
+            #print("Total2 Importe Obras Sociales: ",total_importe_osociales)
+            #print(" ")
 
     else:
         form = ReporteCajaSucursalForm()
 
-    print("Reporte Data: ", reporte_data)
-    print("Totales: ", totales)
+    #print("Reporte Data: ", reporte_data)
+    #print("Totales: ", totales)
 
     return render(request, 'plazoleta/reporte_caja_sucursal.html', {
         'form': form,
@@ -471,18 +610,3 @@ def reporte_caja_sucursal(request):
         'totales': totales,
     })
 
-#Procedimiento original usando messages
-#def crear_caja(request):
-#    if request.method == 'POST':
-#        form = CajaForm(request.POST)
-#        if form.is_valid():
-#            form.save()
-#            messages.success(request, 'La caja se ha creado exitosamente.')
-#            return redirect('nombre_de_la_vista_de_exito') # Reemplaza con la URL a donde quieres redirigir
-#        else:
-#            messages.error(request, 'Por favor, corrige los errores en el formulario.')
-#    else:
-        #request.method == 'GET':
-#        form = CajaForm()
-    #return render(request, 'plazoleta/crear_caja.html', {'form': form})     
-#    return render(request, 'plazoleta/prueba_messages.html', {'form': form}) # <-- Cambia aquí

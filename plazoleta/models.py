@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 #from .models import Sucursal  # Importa el modelo Sucursal para la relación
 from django.db import models
 from django.conf import settings
-#from django.contrib.auth.models import User  # Importa el modelo User de Django
+from django.utils import timezone
 
 # Create your models here.
 class Usuario(AbstractUser):  # Nombre de la clase ahora es 'Usuario'
@@ -41,12 +41,13 @@ class Sucursal(models.Model):
     Direccion = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.NombreSuc} ({self.Direccion})"
+        return f"{self.IdSucursal} - {self.NombreSuc} ({self.Direccion})"
 
 class Caja(models.Model):
     IdCaja = models.AutoField(primary_key=True)
     IdSucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE)
     FechaHora = models.DateTimeField()
+    fec_mov = models.DateTimeField(auto_now=True)
     SaldoInicial = models.DecimalField(max_digits=10, decimal_places=2)
     ImporteVentas = models.DecimalField(max_digits=10, decimal_places=2)
     ImporteEfectivo = models.DecimalField(max_digits=10, decimal_places=2)
@@ -81,8 +82,11 @@ class HistorialCaja(models.Model):
     ]
 
     IdHistorialCaja = models.AutoField(primary_key=True)
-    IdCaja = models.ForeignKey('Caja', on_delete=models.CASCADE)
-    FechaHoraMovimiento = models.DateTimeField(auto_now_add=True)
+    #IdCaja = models.ForeignKey('Caja', on_delete=models.CASCADE)
+    IdCaja = models.ForeignKey(Caja, on_delete=models.SET_NULL, null=True)
+    IdSucursal = models.ForeignKey(Sucursal, on_delete=models.SET_NULL, null=True, related_name='historial_cajas') # Nuevo campo
+    FechaHoraMovimiento = models.DateTimeField()
+    fec_mov = models.DateTimeField(auto_now_add=True)
     TipoMovimiento = models.CharField(max_length=20, choices=TIPO_MOVIMIENTO_CHOICES)
     Usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -92,8 +96,6 @@ class HistorialCaja(models.Model):
         verbose_name='Usuario',
         related_name='historial_cajas'
     )
-    # Puedes optar por guardar una copia de los datos de la caja en el momento del movimiento
-    # para tener un historial completo de los valores. Por ejemplo:
     SaldoInicial = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     ImporteVentas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     ImporteEfectivo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -107,10 +109,12 @@ class HistorialCaja(models.Model):
     Tarjetas = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
     Particulares = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
     OSociales = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
-    # ... puedes incluir todos los campos de Caja que quieras historizar
 
     def __str__(self):
-        return f"Movimiento {self.TipoMovimiento} en Caja {self.IdCaja.IdCaja} por {self.Usuario}"
+        if self.IdSucursal:
+            return f"Movimiento {self.TipoMovimiento} de caja en la Sucursal {self.IdSucursal.NombreSuc} por {self.Usuario} el {self.fec_mov}"
+        else:
+            return f"Movimiento {self.TipoMovimiento} de caja en la Sucursal Desconocida por {self.Usuario} el {self.fec_mov}"
 
 class OSociales(models.Model):
     IdOS = models.AutoField(primary_key=True)
