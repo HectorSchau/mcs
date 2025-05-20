@@ -58,7 +58,7 @@ If authentication is required, use the following demo credentials:
 
 ## **Application Walkthrough**     
 Below are the key screens of the application, along with brief descriptions of their functionality.
-1. Welcome Screen
+1. Welcome Screen  
 This is the application's welcome screen. It represents the fictional company MCS, which provides system services to the businesses Plazoleta Pharmacies and Ledesma Sugar Mill. To proceed, please click the button "Plazoleta Pharmacies".
 ![Welcome Screen](screenshots/S1.png)
 
