@@ -18,8 +18,17 @@ This application interacts with a **SQLite database** to **add, modify, and dele
    ```bash
    git clone https://github.com/HectorSchau/mcs.git
    cd mcs
-- Create a virtual environment and install dependencies:
+2. Create a virtual environment and install dependencies:
    ```bash
    python -m venv venv
    source venv/bin/activate  # (Windows: venv\Scripts\activate)
    pip install -r requirements.txt
+3. Run database migrations:
+   ```bash
+   python manage.py migrate
+4. Start the development server:
+   ```bash
+   python manage.py runserver
+5. Access the app in your browser at http://127.0.0.1:8000/.
+   
+   
