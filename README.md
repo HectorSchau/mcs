@@ -46,9 +46,9 @@ If authentication is required, use the following demo credentials:
 - Hosting: AWS
 
 ## **Features**   
-✔️ Add, update, and delete records from the database
-✔️ Generate reports based on stored data
-✔️ Simple and responsive UI with basic styling
+✔️ Add, update, and delete records from the database  
+✔️ Generate reports based on stored data  
+✔️ Simple and responsive UI with basic styling  
 
 ## **Future Improvements**   
 - Improve the front-end experience
@@ -86,7 +86,7 @@ After successful login, the user is presented with the main options inside Plazo
 This screen presents two options:
 - "Cash Report by Branch" – Displays a report of cash data preloaded for May 30, 2025, categorized by branch.
 - "Cash Data Entry by Branch" – Allows users to input their own preferences and see how different data would affect the report
-- 
+  
 ![Welcome Screen](screenshots/S5.png)
 
 6. Cash Report Generation  
