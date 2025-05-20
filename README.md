@@ -31,13 +31,30 @@ This application interacts with a **SQLite database** to **add, modify, and dele
    python manage.py runserver
 5. Access the app in your browser at http://127.0.0.1:8000/.
 
-## **How to Access the Live Version**   
+How to Access the Live Version
 For testing the deployed version, use the Live Demo link above.
 If authentication is required, use the following demo credentials:
-   ```bash
-   Username: guess  
-   Password: 123456
+Username: guess  
+Password: 123456
+
 
 If credentials are not provided here, please reach out to request access.
-
-   
+Technologies Used
+- Backend: Python, Django
+- Database: SQLite
+- Frontend: HTML, CSS
+- Hosting: AWS
+Features
+✔️ Add, update, and delete records from the database
+✔️ Generate reports based on stored data
+✔️ Simple and responsive UI with basic styling
+Future Improvements
+- Improve the front-end experience
+- Implement user authentication for enhanced security
+- Expand database functionality
+- Add bilingual support (Spanish & English)
+Application Walkthrough
+Below are the key screens of the application, along with brief descriptions of their functionality.
+1. Welcome Screen
+This is the application's welcome screen. It represents the fictional company MCS, which provides system services to the businesses Plazoleta Pharmacies and Ledesma Sugar Mill. To proceed, please click the button "Plazoleta Pharmacies".
+![Welcome Screen](screenshots/S1 mcs.png)
