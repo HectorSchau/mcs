@@ -72,7 +72,7 @@ class Caja(models.Model):
     #usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Cajero')
 
     def __str__(self):
-        return f"Caja {self.IdCaja} - Sucursal {self.IdSucursal.NombreSuc} - {self.FechaHora}"
+        return f"Caja {self.IdCaja} - Sucursal {self.IdSucursal.NombreSuc} - {self.FechaHora} creada el {self.fec_mov} por {self.usuario}"
 
 class HistorialCaja(models.Model):
     TIPO_MOVIMIENTO_CHOICES = [
@@ -96,6 +96,13 @@ class HistorialCaja(models.Model):
         verbose_name='Usuario',
         related_name='historial_cajas'
     )
+
+    # Campos para almacenar el "snapshot" de la caja y sucursal en el momento del movimiento
+    caja_id_historico = models.IntegerField(null=True, blank=True, verbose_name="ID Caja Histórico")
+    sucursal_id_historico = models.IntegerField(null=True, blank=True, verbose_name="ID Sucursal Histórico")
+    nombre_sucursal_historico = models.CharField(max_length=50, null=True, blank=True, verbose_name="Nombre Sucursal Histórico")
+    fecha_caja_historico = models.DateTimeField(null=True, blank=True, verbose_name="Fecha Caja Histórico") # La FechaHora de la Caja original
+
     SaldoInicial = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     ImporteVentas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     ImporteEfectivo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -111,11 +118,25 @@ class HistorialCaja(models.Model):
     OSociales = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True)
 
     def __str__(self):
+        # Usar los campos históricos si los FKs son NULL (ej. para cajas dadas de baja)
+        caja_info = f"Caja ID: {self.caja_id_historico or 'N/A'}"
+        sucursal_info = f"Sucursal: {self.nombre_sucursal_historico or 'N/A'} (ID: {self.sucursal_id_historico or 'N/A'})"
+        fecha_caja_info = f"Fecha Caja: {self.fecha_caja_historico.strftime('%Y-%m-%d %H:%M:%S') if self.fecha_caja_historico else 'N/A'}"
+
+        if self.IdCaja: # Si la caja todavía existe
+            caja_info = f"Caja ID: {self.IdCaja}"
+        if self.IdSucursal: # Si la sucursal todavía existe
+            sucursal_info = f"Sucursal: {self.IdSucursal.NombreSuc} (ID: {self.IdSucursal.IdSucursal})"
+
+        return f"Movimiento {self.TipoMovimiento} de {caja_info} en {sucursal_info} por {self.Usuario} el {self.FechaHoraMovimiento.strftime('%Y-%m-%d %H:%M:%S')}"
+'''
+    def __str__(self):
         if self.IdSucursal:
-            return f"Movimiento {self.TipoMovimiento} de caja en la Sucursal {self.IdSucursal.NombreSuc} por {self.Usuario} el {self.fec_mov}"
+            return f"Movimiento {self.TipoMovimiento} en caja {self.IdCaja} en la Sucursal {self.IdSucursal.NombreSuc} por {self.Usuario} el {self.fec_mov}"
         else:
             return f"Movimiento {self.TipoMovimiento} de caja en la Sucursal Desconocida por {self.Usuario} el {self.fec_mov}"
-
+'''
+            
 class OSociales(models.Model):
     IdOS = models.AutoField(primary_key=True)
     NombreOS = models.CharField(max_length=100)

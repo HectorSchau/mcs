@@ -1,0 +1,25 @@
+.btn-buscar-prominente {
+    background-color: #4CAF50; /* Un verde vibrante */
+    color: white; /* Texto blanco */
+    padding: 15px 30px; /* Más padding para hacerlo más grande */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    font-size: 1.2em; /* Texto más grande */
+    font-weight: bold; /* Texto en negrita */
+    cursor: pointer; /* Indica que es clickeable */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para darle profundidad */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones suaves */
+    display: block; /* Ocupa todo el ancho disponible */
+    margin: 20px auto; /* Centra el botón y le da margen superior/inferior */
+}
+
+.btn-buscar-prominente:hover {
+    background-color: #45a049; /* Un poco más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Un ligero levantamiento al pasar el ratón */
+}
+
+.btn-buscar-prominente:active {
+    background-color: #3e8e41; /* Aún más oscuro al hacer clic */
+    transform: translateY(0); /* Vuelve a su posición original al hacer clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña al hacer clic */
+}

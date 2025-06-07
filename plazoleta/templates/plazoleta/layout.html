@@ -1,5 +1,7 @@
 {% load static %}
 {% load i18n %}
+{% load crispy_forms_tags %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +17,7 @@
                 background-color: #e3873b !important; /* Utilizando el color naranja que definiste para el encabezado de la tabla */
             }
         </style>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     </head>
     <body>
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
