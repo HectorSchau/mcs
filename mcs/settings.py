@@ -63,6 +63,12 @@ USE_L10N = True
 
 ROOT_URLCONF = 'mcs.urls'
 
+# para hacer que Https sea redireccionado a http
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
