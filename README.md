@@ -35,7 +35,7 @@ This application interacts with a **SQLite database** to **add, modify, and dele
 For testing the deployed version, use the Live Demo link above.
 If authentication is required, use the following demo credentials:
    ```bash
-   Username: guess  
+   Username: guest  
    Password: 123456
    ```
 
