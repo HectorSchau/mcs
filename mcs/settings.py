@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure---ps3=_sj7mr+&watf)+oy5w)nuqkrs&onpn$e(qa_rly6)npc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['51.20.74.159', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['portfolio1.duckdns.org', '51.20.74.159', 'localhost', '127.0.0.1']
 
 # Esto me lo recomendo Gemini por el cambio de la definicion de la tabla de user
 AUTH_USER_MODEL = 'plazoleta.Usuario'
@@ -65,10 +65,10 @@ USE_L10N = True
 ROOT_URLCONF = 'mcs.urls'
 
 # para hacer que Https sea redireccionado a http
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = True
 #SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 TEMPLATES = [
     {
